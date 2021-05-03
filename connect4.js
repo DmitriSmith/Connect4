@@ -107,7 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* Check if the given player has won, starting from the upper left diagonal and going around
  * counterclockwise to the upper right diagonal. Originates from the column and row passed into
- * the parameters
+ * the parameters. Note that a pattern for checking straight up is included only to simplify 
+ * the for loop - checking up is pointless with how the code is currently set up
  */
 
 function checkIfWon(player, col, row) {
@@ -118,11 +119,14 @@ function checkIfWon(player, col, row) {
 		(col, row) => {return [col  ,row+1]},	// Down
 		(col, row) => {return [col+1,row+1]},	// Down and right
 		(col, row) => {return [col+1,row  ]},	// Right
-		(col, row) => {return [col+1,row-1]}	// Up and right
+		(col, row) => {return [col+1,row-1]},	// Up and right
+		(col, row) => {return [col  ,row-1]}	// Up, checking this is meaningless but having it makes other things easier
 	]
 	
-	for (i=0;i<next_space_patterns.length;i++) {
-		if (checkForWinner(player,[col,row],next_space_patterns[i]) > 3) {
+	for (i=0;i<4;i++) {
+		// Need to check both directions simultaneously
+		count = checkForWinner(player,[col,row],next_space_patterns[i])+checkForWinner(player,[col,row],next_space_patterns[i+4])-1;
+		if (count > 3) {
 			return true;
 		}
 	}
